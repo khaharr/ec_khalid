@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use function Symfony\Component\String\s;
+use App\Repository\BookRepository;
 
 class HomeController extends AbstractController
 {
@@ -22,11 +23,13 @@ class HomeController extends AbstractController
     }
 
     #[Route('/', name: 'app.home')]
-    public function index(): Response
+    public function index(BookRepository $bookRepository): Response
     {
-        $userId     = 1;
-        $booksRead  = $this->readBookRepository->findByUserId($userId, false);
+        $user = $this->getUser ();
+        $booksRead  = $this->readBookRepository->findByUserId($user->getId(), false);
         $email = $this->security->getUser()->getUserIdentifier();
+        $books = $bookRepository->findAll();
+
 
 
         // Render the 'hello.html.twig' template
@@ -34,6 +37,8 @@ class HomeController extends AbstractController
             'booksRead' => $booksRead,
             'name'      => 'Accueil', // Pass data to the view
             'email'     => $email,
+            'books' => $books,
+
         ]);
     }
 }
