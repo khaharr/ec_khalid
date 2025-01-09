@@ -1,3 +1,4 @@
+bin/console doctrine:query:sql "SELECT * FROM app"
 #!/usr/bin/env php
 <?php
 
