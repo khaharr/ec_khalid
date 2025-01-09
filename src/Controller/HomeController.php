@@ -18,14 +18,14 @@ class HomeController extends AbstractController
     // Inject the repository via the constructor
     public function __construct(BookReadRepository $bookReadRepository, private readonly Security $security)
     {
-        $this->bookReadRepository = $bookReadRepository;
+        $this->readBookRepository = $bookReadRepository;
     }
 
     #[Route('/', name: 'app.home')]
     public function index(): Response
     {
         $userId     = 1;
-        $booksRead  = $this->bookReadRepository->findByUserId($userId, false);
+        $booksRead  = $this->readBookRepository->findByUserId($userId, false);
         $email = $this->security->getUser()->getUserIdentifier();
 
 

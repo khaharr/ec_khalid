@@ -1,5 +1,4 @@
 <?php
-// src/Form/RegistrationFormType.php
 
 namespace App\Form;
 
