@@ -43,6 +43,15 @@ class BookRead
     #[ORM\JoinColumn(nullable: false)] 
     private ?Book $book = null;
 
+    /**
+     * @OneToMany(targetEntity="Comment", mappedBy="bookRead")
+     */
+    private $comments;
+
+    public function getComments() {
+        return $this->comments;
+    } 
+    
     // Relation OneToMany avec Like
     #[ORM\OneToMany(mappedBy: 'bookRead', targetEntity: Like::class, cascade: ['persist', 'remove'])]
     private Collection $likes;
