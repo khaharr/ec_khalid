@@ -46,4 +46,46 @@ class BookReadController extends AbstractController
             'isRead' => $isRead
         ], Response::HTTP_OK);
     }
+
+    #[Route('/edit-book-read/{id}', name: 'book_read_edit', methods: ['POST'])]
+    public function editBookRead(Request $request, EntityManagerInterface $entityManager, BookRepository $bookRepository, BookRead $bookRead): JsonResponse
+    {
+        $bookId = $request->request->get('book');
+        $description = $request->request->get('description');
+        $rating = $request->request->get('rating');
+        $isRead = $request->request->get('check') === 'on';
+
+        $book = $bookRepository->find($bookId);
+        if (!$book) {
+            return $this->json(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $bookRead->setBook($book);
+        $bookRead->setDescription($description);
+        $bookRead->setRating($rating);
+        $bookRead->setRead($isRead);
+        $bookRead->setUpdatedAt(new \DateTime());
+
+        $entityManager->flush();
+
+        return $this->json([
+            'id' => $bookRead->getId(),
+            'bookName' => $book->getName(),
+            'description' => $description,
+            'rating' => $rating,
+            'isRead' => $isRead,
+        ], Response::HTTP_OK);
+    }
+
+    #[Route('/api/book-read/{id}', name: 'book_read_get', methods: ['GET'])]
+    public function getBookRead(BookRead $bookRead): JsonResponse
+    {
+        return $this->json([
+            'id' => $bookRead->getId(),
+            'bookId' => $bookRead->getBook()->getId(),
+            'description' => $bookRead->getDescription(),
+            'rating' => $bookRead->getRating(),
+            'isRead' => $bookRead->isRead(),
+        ]);
+    }
 }

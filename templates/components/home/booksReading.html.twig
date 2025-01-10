@@ -41,6 +41,7 @@
                                     <span class="text-2sm text-gray-700 font-normal leading-3">
                                    <p>{{ bookRead.book.description }}</p> <!-- Description du livre -->
                                 </span>
+                                <button class="btn btn-edit" data-id="{{ bookRead.id }}">Modifier</button>
                                 </div>
                             </td>
                             <td class="text-end">
@@ -60,3 +61,40 @@
         </div>
     </div>
 </div>
+<script>
+document.querySelectorAll('.btn-edit').forEach(button => {
+    button.addEventListener('click', function () {
+        const bookId = this.getAttribute('data-id');
+        fetch(`/api/book-read/${bookId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('book').value = data.bookId;
+                document.getElementById('description').value = data.description;
+                document.getElementById('rating').value = data.rating;
+                document.getElementById('check').checked = data.isRead;
+
+                const form = document.getElementById('bookReadForm');
+                form.action = `/edit-book-read/${bookId}`;
+                document.getElementById('book_modal').classList.add('open');
+            });
+    });
+});
+
+document.getElementById('bookReadForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                // Mettre à jour le tableau
+                location.reload();
+            }
+        });
+});
+</script>

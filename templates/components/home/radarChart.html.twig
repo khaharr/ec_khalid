@@ -1,12 +1,36 @@
 <div class="card h-full">
     <div class="card-header">
-        <h3 class="card-title">
-            Répartition de mes lectures
-        </h3>
+        <h3 class="card-title">Répartition de mes lectures</h3>
     </div>
     <div class="card-body flex flex-col gap-5">
-        <figure>
-            <img src="{{  asset('media/charts/Radar_Sample.png') }}" alt="Radar Sample"/>
-        </figure>
+        <div id="radarChart"></div> <!-- id graphique  -->
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/categories-data')
+        .then(response => response.json())
+        .then(data => {
+            const options = {
+                chart: {
+                    type: 'radar',
+                    height: 350,
+                },
+                series: [{
+                    name: 'Nombre d\'éléments',
+                    data: data.series,
+                }],
+                xaxis: {
+                    categories: data.categories,
+                },
+                title: {
+                    text: 'Répartition des catégories',
+                },
+            };
+
+            const chart = new ApexCharts(document.querySelector('#radarChart'), options);
+            chart.render();
+        })
+        .catch(error => console.error('erreur radar :', error));
+});
+</script>
