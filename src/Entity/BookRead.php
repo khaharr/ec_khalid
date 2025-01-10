@@ -1,10 +1,11 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\BookReadRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: BookReadRepository::class)]
 class BookRead
@@ -42,15 +43,31 @@ class BookRead
     #[ORM\JoinColumn(nullable: false)] 
     private ?Book $book = null;
 
-    public function getBook(): ?Book
-    {
-        return $this->book;
-    }
+    // Relation OneToMany avec Like
+    #[ORM\OneToMany(mappedBy: 'bookRead', targetEntity: Like::class, cascade: ['persist', 'remove'])]
+    private Collection $likes;
 
-    public function setBook(?Book $book): static
+    public function __construct()
     {
-        $this->book = $book;
-        return $this;
+        $this->likes = new ArrayCollection(); // S'assurer que c'est une collection vide au départ
+    }
+    public function getBook(): ?Book
+{
+    return $this->book;
+}
+
+public function setBook(?Book $book): static
+{
+    $this->book = $book;
+    return $this;
+}
+
+    /**
+     * Cette méthode calcule le nombre de likes pour un livre lu
+     */
+    public function getLikeCount(): int
+    {
+        return $this->likes->count(); // On utilise la méthode count sur la collection
     }
 
     public function getId(): ?int

@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Explorer{% endblock %}
+
+{% block body %}
+<h1 class="text-center text-4xl font-bold mt-6">communauté</h1>
+
+<div class="container mt-8">
+    <div class="card card-grid h-full">
+        <div class="card-body">
+            <div id="current-books-table" data-datatable="true" data-datatable-page-size="5">
+                <div class="scrollable-x-auto">
+                    <table id="booksTable" class="table table-border data-datatable-table">
+                        <thead>
+                            <tr>
+                                <th class="min-w-[280px]">Livre</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bookRead in booksRead %}
+                                <tr>
+                                    <td>
+                                        <div class="flex flex-col gap-2">
+                                            <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary" href="{{ path('explorer_show', {'id': bookRead.id}) }}">
+                                                <h3>{{ bookRead.book.name }}</h3> <!-- Nom du livre -->
+                                            </a>
+                                            <p class="text-sm text-gray-700">{{ bookRead.book.description }}</p> <!-- Description du livre -->
+                                             <p class="text-sm text-gray-700">Note moyenne : {{ bookRead.rating }}</p>
+                                            <p class="text-sm text-gray-700">{{ bookRead.userId }} a lu ce livre</p>
+                                            <div class="comments" id="comments-{{ bookRead.id }}">
+
+
+                                        </div>
+                                    </td>
+                                   
+                                    <td class="text-center">
+                                        <button class="btn btn-comment" data-id="{{ bookRead.id }}">💬 Commenter</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer flex justify-between items-center text-gray-600">
+            <div class="pagination" data-datatable-pagination="true"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Ajouter un script JS pour gérer les interactions -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Gérer les clics sur le bouton "Commenter"
+        document.querySelectorAll('.btn-comment').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const bookReadId = this.getAttribute('data-id');
+                const commentContent = prompt("Votre commentaire :");
+
+                if (commentContent) {
+                    fetch(`/api/comment/${bookReadId}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ comment: commentContent }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const commentsContainer = document.querySelector(`#comments-${bookReadId}`);
+                            const newComment = document.createElement('p');
+                            newComment.innerHTML = `<strong>Utilisateur ${data.userId}:</strong> ${data.comment}`;
+                            commentsContainer.appendChild(newComment);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    function editBookRead(bookReadId) {
+        // Redirection vers la page d'édition du livre
+        window.location.href = `/edit-book-read/${bookReadId}`;
+    }
+</script>
+{% endblock %}
