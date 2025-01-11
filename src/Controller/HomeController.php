@@ -23,6 +23,10 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
 
+        if (!$user) {
+            // Utilisation de la méthode redirectToRoute pour rediriger vers la page de connexion
+            return $this->redirectToRoute('auth.login');
+        }
         // Récupère toutes les lectures (pas uniquement celles lues)
         $allBooksRead = $this->readBookRepository->findByUserId($user->getId(), false);
         
@@ -33,7 +37,7 @@ class HomeController extends AbstractController
         $books = $bookRepository->findAll();
         
         return $this->render('pages/home.html.twig', [
-            'allBooksRead' => $allBooksRead, // Utilisé pour d'autres sections si nécessaire
+            'allBooksRead' => $allBooksRead, 
             'booksReadCompleted' => $booksReadCompleted, // Spécifique au composant
             'name' => 'Accueil',
             'email' => $email,

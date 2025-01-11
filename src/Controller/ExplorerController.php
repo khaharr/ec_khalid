@@ -19,15 +19,15 @@ class ExplorerController extends AbstractController
     #[Route('/explorer', name: 'explorer_index', methods: ['GET'])]
     public function index(BookReadRepository $bookReadRepository, BookRepository $bookRepository)
     {
-        // Récupérer les livres déjà lus
+        // Récupérer  lives déjà lus
         $booksRead = $bookReadRepository->findBy(['is_read' => true]);
 
-        // Récupérer tous les livres (ou selon un critère spécifique)
+        // Récupérer tous les livres 
         $books = $bookRepository->findAll();
 
         return $this->render('pages/explorer.html.twig', [
             'booksRead' => $booksRead,
-            'books' => $books, // Passer les livres au template
+            'books' => $books, 
         ]);
     }
     
@@ -46,7 +46,7 @@ public function likeBookRead(BookRead $bookRead, LikeRepository $likeRepository)
     try {
         $userId = $this->getUser()->getId();
 
-        // Vérifie si l'utilisateur a déjà liké ce livre
+        // Vérifiecation si l'utilisateur a déjà liké ce livre
         $existingLike = $likeRepository->findOneBy([
             'bookRead' => $bookRead,
             'userId' => $userId,

@@ -13,31 +13,30 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BookReadController extends AbstractController
 {
-    // Route pour ajouter une lecture d'un livre
+    // ajoute une lecture d'un livre 
     #[Route('/add-book-read', name: 'book_read_add', methods: ['POST'])]
     public function addBookRead(Request $request, EntityManagerInterface $entityManager, BookRepository $bookRepository): JsonResponse
     {
-        // Récupération des données envoyées via la requête POST
         $bookId = $request->request->get('book');
         $description = $request->request->get('description');
         $rating = $request->request->get('rating');
         $isRead = $request->request->get('check') ? true : false;
 
-        // Recherche du livre en base de données
+        // Recherche du livre en bdd
         $book = $bookRepository->find($bookId);
         if (!$book) {
             return $this->json(['error' => 'Book not found'], Response::HTTP_NOT_FOUND);
         }
 
-        // Création d'une nouvelle instance de BookRead pour enregistrer la lecture
+        
         $bookRead = new BookRead();
         $bookRead->setUserId($this->getUser()->getId()); 
         $bookRead->setBook($book); 
         $bookRead->setDescription($description); 
         $bookRead->setRating($rating); 
-        $bookRead->setRead($isRead); // Statut "lu" ou "non lu"
-        $bookRead->setCreatedAt(new \DateTime()); // Date de création
-        $bookRead->setUpdatedAt(new \DateTime()); // Date de mise à jour initiale
+        $bookRead->setRead($isRead); // lu /non ly
+        $bookRead->setCreatedAt(new \DateTime()); 
+        $bookRead->setUpdatedAt(new \DateTime()); 
 
         $entityManager->persist($bookRead);
         $entityManager->flush(); 
@@ -51,11 +50,10 @@ class BookReadController extends AbstractController
         ], Response::HTTP_OK);
     }
 
-    // Route pour modifier une lecture existante
+    // modifier une lecture existante pas fonctionnel deso thibault j'y arrivais pas
     #[Route('/edit-book-read/{id}', name: 'book_read_edit', methods: ['POST'])]
     public function editBookRead(Request $request, EntityManagerInterface $entityManager, BookRepository $bookRepository, BookRead $bookRead): JsonResponse
     {
-        
         $bookId = $request->request->get('book');
         $description = $request->request->get('description');
         $rating = $request->request->get('rating');
@@ -71,7 +69,7 @@ class BookReadController extends AbstractController
         $bookRead->setBook($book); 
         $bookRead->setDescription($description); 
         $bookRead->setRating($rating); 
-        $bookRead->setRead($isRead); // Nouveau statut "lu"
+        $bookRead->setRead($isRead); //  statut "lu"
         $bookRead->setUpdatedAt(new \DateTime()); 
 
         $entityManager->flush();
@@ -85,7 +83,7 @@ class BookReadController extends AbstractController
         ], Response::HTTP_OK);
     }
 
-    // Route pour récupérer les informations d'une lecture spécifique
+    // récupérer les informations d'une lecture spécifique
     #[Route('/api/book-read/{id}', name: 'book_read_get', methods: ['GET'])]
     public function getBookRead(BookRead $bookRead): JsonResponse
     {

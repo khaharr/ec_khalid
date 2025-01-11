@@ -52,13 +52,12 @@ class BookRead
         return $this->comments;
     } 
     
-    // Relation OneToMany avec Like
     #[ORM\OneToMany(mappedBy: 'bookRead', targetEntity: Like::class, cascade: ['persist', 'remove'])]
     private Collection $likes;
 
     public function __construct()
     {
-        $this->likes = new ArrayCollection(); // S'assurer que c'est une collection vide au départ
+        $this->likes = new ArrayCollection(); 
     }
     public function getBook(): ?Book
 {
@@ -71,12 +70,10 @@ public function setBook(?Book $book): static
     return $this;
 }
 
-    /**
-     * Cette méthode calcule le nombre de likes pour un livre lu
-     */
+   
     public function getLikeCount(): int
     {
-        return $this->likes->count(); // On utilise la méthode count sur la collection
+        return $this->likes->count(); 
     }
 
     public function getId(): ?int
