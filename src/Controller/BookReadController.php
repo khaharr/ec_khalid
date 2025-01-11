@@ -21,7 +21,7 @@ class BookReadController extends AbstractController
         $bookId = $request->request->get('book');
         $description = $request->request->get('description');
         $rating = $request->request->get('rating');
-        $isRead = $request->request->get('check') === 'on';
+        $isRead = $request->request->get('check') ? true : false;
 
         // Recherche du livre en base de données
         $book = $bookRepository->find($bookId);

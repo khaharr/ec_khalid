@@ -43,7 +43,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="switch">
                                 <span class="switch-label font-normal text-gray-900">Lecture terminée</span>
-                                <input name="check" type="checkbox" value="0"/>
+                                <input name="check" type="checkbox" value="1"/>
                             </label>
                         </div>
 
@@ -67,28 +67,28 @@
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
+    if (data.error) {
+        alert(data.error);
+    } else {
+        const table = document.getElementById('booksTable'); // Identifie ton tableau
+        if (table) {
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${data.bookName}</td>
+                <td>${data.description}</td>
+                <td>${data.rating}</td>
+                <td>${data.isRead ? 'Oui' : 'Non'}</td>
+            `;
+            table.appendChild(newRow);
         } else {
-            const table = document.getElementById('booksTable'); // Identifiez votre tableau
-            if (table) {
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td>${data.bookName}</td>
-                    <td>${data.description}</td>
-                    <td>${data.rating}</td>
-                    <td>${data.isRead ? 'Oui' : 'Non'}</td>
-                `;
-                table.appendChild(newRow);
-            } else {
-                console.error('Le tableau booksTable n\'a pas été trouvé.');
-            }
-
-            // Fermer la popup
-            document.getElementById('book_modal').classList.remove('open');
-            
+            console.error('Le tableau booksTable n\'a pas été trouvé.');
         }
-    })
+
+        // Ferme la popup
+        document.getElementById('book_modal').classList.remove('open');
+    }
+})
+
     .catch(error => console.error('Erreur:', error));
 });
 </script>
