@@ -1,15 +1,11 @@
 <?php
-
 namespace App\Controller;
 
 use App\Repository\BookReadRepository;
-use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use function Symfony\Component\String\s;
+use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\BookRepository;
 
 class HomeController extends AbstractController
@@ -25,21 +21,23 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app.home')]
     public function index(BookRepository $bookRepository): Response
     {
-        $user = $this->getUser ();
-        $booksRead  = $this->readBookRepository->findByUserId($user->getId(), false);
+        $user = $this->getUser();
+
+        // Récupère toutes les lectures (pas uniquement celles lues)
+        $allBooksRead = $this->readBookRepository->findByUserId($user->getId(), false);
+        
+        // Récupère uniquement les livres lus
+        $booksReadCompleted = $this->readBookRepository->findReadBooksByUserId($user->getId());
+    
         $email = $this->security->getUser()->getUserIdentifier();
         $books = $bookRepository->findAll();
-
-
-
-        // Render the 'hello.html.twig' template
+        
         return $this->render('pages/home.html.twig', [
-            'booksRead' => $booksRead,
-            'name'      => 'Accueil', // Pass data to the view
-            'email'     => $email,
+            'allBooksRead' => $allBooksRead, // Utilisé pour d'autres sections si nécessaire
+            'booksReadCompleted' => $booksReadCompleted, // Spécifique au composant
+            'name' => 'Accueil',
+            'email' => $email,
             'books' => $books,
-
         ]);
     }
-    
 }

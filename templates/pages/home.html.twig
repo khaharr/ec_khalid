@@ -45,9 +45,11 @@
         <!-- begin: grid -->
         <div class="grid lg:grid-cols-5 gap-5 lg:gap-7.5 items-stretch">
             <div class="lg:col-span-3">
-                <div class="grid">
-                    {% include 'components/home/booksRead.html.twig' %}
-                </div>
+               <!-- Passer uniquement les livres terminés -->
+<div class="grid">
+    {% include 'components/home/booksRead.html.twig' with { booksRead: booksReadCompleted } %}
+</div>
+
             </div>
             <div class="lg:col-span-2">
                 {% include 'components/home/radarChart.html.twig' %}
